@@ -8,6 +8,7 @@
 						<input type="text" name="employee_id" v-model="employee_id" placeholder="Employee ID">
 						<label for="employee_id">Employee ID</label>
 						<p v-if="missingEmpId && attemptSubmit" class="red-text text-lighten-1">Employee ID field is required</p>
+						<p v-if="invalidEmpId && attemptSubmit && !missingEmpId" class="red-text text-lighten-1">Employee ID field should contain only 6 digits.</p>
 					</div>
 				</div>
 				<div class="row">
@@ -57,6 +58,14 @@
 			missingEmpId: function() {
 				return this.employee_id === '';
 			},
+			invalidEmpId: function() {
+				var pattern = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+				return (
+					isNaN(this.employee_id) ||
+					pattern.test(this.employee_id) ||
+					this.checkLength(this.employee_id) === true
+				);
+			},
 			missingName: function() {
 				return this.name === '';
 			},
@@ -68,6 +77,11 @@
 			}
 		},
 		methods: {
+			checkLength(n) {
+				if(n.toString().length !== 6) {
+					return true;
+				}
+			},
 			saveEmployee(e) {
 				this.attemptSubmit = true;
 				if(this.missingEmpId || this.missingName || this.missingDept || this.missingPosition) {
